@@ -114,7 +114,7 @@ class HexapodState:
                 f"  Pitch: {np.degrees(self.pose.pitch):.2f} deg",
                 f"  Roll: {np.degrees(self.pose.roll):.2f} deg",
             ])
-        if self.corner_heights:
+        if self.corner_heights is not None:
             h0, h1, h2 = self.corner_heights
             lines.append(f"  Corners: {h0:.1f}, {h1:.1f}, {h2:.1f}")
         lines.append(
@@ -316,25 +316,28 @@ class HexapodUnit:
                 redundant_constraints=analysis.redundant_constraints,
             )
 
-        # Build state
+        # On solver failure, fall back to last valid state or safe defaults
+        # so downstream code never sees None for required array fields.
+        if solve_output.result != SolveResult.SUCCESS:
+            return self._create_invalid_state(
+                analysis, input_mode, solve_output.message
+            )
+
+        # Build state — solver succeeded, all fields are populated
         state = HexapodState(
-            constraint_status=(
-                analysis.status
-                if solve_output.result == SolveResult.SUCCESS
-                else SolveStatus.CONFLICTING
-            ),
+            constraint_status=analysis.status,
             constraint_analysis=analysis,
             input_mode=input_mode,
-            is_valid=(solve_output.result == SolveResult.SUCCESS),
+            is_valid=True,
             solve_message=solve_output.message,
             pose=solve_output.pose,
             carriage_positions=solve_output.carriage_positions,
             carriage_distances=solve_output.carriage_distances,
             carriage_world=solve_output.carriage_world,
-            vertices=solve_output.pose.vertices if solve_output.pose else None,
-            center=solve_output.pose.center if solve_output.pose else None,
-            normal=solve_output.pose.normal if solve_output.pose else None,
-            corner_heights=solve_output.pose.corner_heights if solve_output.pose else None,
+            vertices=solve_output.pose.vertices,
+            center=solve_output.pose.center,
+            normal=solve_output.pose.normal,
+            corner_heights=solve_output.pose.corner_heights,
             rod_lengths=solve_output.actual_rod_lengths,
             rod_error=solve_output.error,
             geometry=self.geometry,
