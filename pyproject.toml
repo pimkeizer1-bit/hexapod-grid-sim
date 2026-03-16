@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "hexapod-grid-sim"
+version = "0.1.0"
+description = "GPU-accelerated 3-DOF hexapod parallel platform simulator for studying emergent behavior"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "pimkeizer1-bit"},
+]
+dependencies = [
+    "taichi>=1.7.0",
+    "numpy>=1.24.0",
+    "dearpygui>=2.0.0",
+    "pillow>=10.0.0",
+    "psutil>=5.9.0",
+    "gputil>=1.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+hexapod-single = "hexapod_grid_sim.main:main"
+hexapod-grid = "hexapod_grid_sim.main_grid:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
