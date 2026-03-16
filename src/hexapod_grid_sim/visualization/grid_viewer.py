@@ -11,8 +11,6 @@ Renders a triangular grid of hexapod parallel platforms with:
 Y-up coordinate system (Taichi default).
 """
 
-from __future__ import annotations
-
 import math
 from typing import Dict, List, Optional, Tuple
 

@@ -16,28 +16,28 @@ class ConstraintType(Enum):
     """Types of constraints that can be applied to the hexapod platform."""
 
     # Direct actuator control
-    CARRIAGE_0 = auto()
-    CARRIAGE_1 = auto()
-    CARRIAGE_2 = auto()
+    CARRIAGE_0 = "carriage_0"
+    CARRIAGE_1 = "carriage_1"
+    CARRIAGE_2 = "carriage_2"
 
     # Platform pose
-    HEIGHT = auto()
-    PITCH = auto()
-    ROLL = auto()
+    HEIGHT = "height"
+    PITCH = "pitch"
+    ROLL = "roll"
 
     # Individual vertex (corner) heights
-    CORNER_0 = auto()
-    CORNER_1 = auto()
-    CORNER_2 = auto()
+    CORNER_0 = "corner_0"
+    CORNER_1 = "corner_1"
+    CORNER_2 = "corner_2"
 
 
 class SolveStatus(Enum):
     """Status of the constraint system's solvability."""
 
-    UNDERDEFINED = auto()
-    DEFINED = auto()
-    OVERDEFINED = auto()
-    CONFLICTING = auto()
+    UNDERDEFINED = "underdefined"
+    DEFINED = "defined"
+    OVERDEFINED = "overdefined"
+    CONFLICTING = "conflicting"
 
 
 # ---------------------------------------------------------------------------

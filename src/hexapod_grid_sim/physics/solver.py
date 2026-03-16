@@ -93,16 +93,17 @@ class HexapodGeometry:
     # -- coordinate helpers --------------------------------------------------
 
     def carriage_distance_to_normalized(self, distance: float) -> float:
-        """Convert an absolute distance along the rail to [0, 1]."""
-        return (distance - self.rail_start) / self.rail_length
+        """Convert an absolute distance along the rail to [0, 100]."""
+        return np.clip((distance - self.rail_start) / self.rail_length * 100.0, 0.0, 100.0)
 
     def carriage_position_to_normalized(self, distance: float) -> float:
-        """Alias kept for API compatibility; identical to *carriage_distance_to_normalized*."""
+        """Alias for *carriage_distance_to_normalized*."""
         return self.carriage_distance_to_normalized(distance)
 
     def carriage_normalized_to_distance(self, normalized: float) -> float:
-        """Convert a normalized [0, 1] position to absolute distance."""
-        return self.rail_start + normalized * self.rail_length
+        """Convert a normalized [0, 100] position to absolute distance."""
+        t = np.clip(normalized / 100.0, 0.0, 1.0)
+        return self.rail_start + t * self.rail_length
 
     # -- range computations --------------------------------------------------
 
@@ -592,7 +593,7 @@ class HexapodSolver:
         Parameters
         ----------
         carriage_normalized : ndarray, shape (3,)
-            Normalised carriage positions in [0, 1].
+            Normalised carriage positions in [0, 100].
 
         Returns
         -------

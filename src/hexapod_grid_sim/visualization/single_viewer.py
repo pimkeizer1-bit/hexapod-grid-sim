@@ -7,8 +7,6 @@ Provides real-time visualization of a hexapod parallel platform with:
 - Y-up coordinate system (Taichi default)
 """
 
-from __future__ import annotations
-
 import math
 from typing import Optional, Tuple
 
@@ -147,7 +145,7 @@ class HexapodViewer:
         rail_start: ti.f32,
         rail_length: ti.f32,
         is_valid: ti.i32,
-    ) -> None:
+    ):
         """Populate line / point / triangle buffers for one frame."""
 
         carriage = [
@@ -199,23 +197,39 @@ class HexapodViewer:
 
         # ---- Base triangle edges (gray) ----
         base_color = tm.vec3(0.5, 0.5, 0.5)
-        for i in ti.static(range(3)):
-            j = (i + 1) % 3
-            self.line_vertices[line_idx * 2] = base[i]
-            self.line_vertices[line_idx * 2 + 1] = base[j]
-            self.line_colors[line_idx * 2] = base_color
-            self.line_colors[line_idx * 2 + 1] = base_color
-            line_idx += 1
+        self.line_vertices[line_idx * 2] = base[0]
+        self.line_vertices[line_idx * 2 + 1] = base[1]
+        self.line_colors[line_idx * 2] = base_color
+        self.line_colors[line_idx * 2 + 1] = base_color
+        line_idx += 1
+        self.line_vertices[line_idx * 2] = base[1]
+        self.line_vertices[line_idx * 2 + 1] = base[2]
+        self.line_colors[line_idx * 2] = base_color
+        self.line_colors[line_idx * 2 + 1] = base_color
+        line_idx += 1
+        self.line_vertices[line_idx * 2] = base[2]
+        self.line_vertices[line_idx * 2 + 1] = base[0]
+        self.line_colors[line_idx * 2] = base_color
+        self.line_colors[line_idx * 2 + 1] = base_color
+        line_idx += 1
 
         # ---- Platform edges (blue if valid, red otherwise) ----
         plat_color = tm.vec3(0.2, 0.6, 1.0) if is_valid else tm.vec3(1.0, 0.3, 0.3)
-        for i in ti.static(range(3)):
-            j = (i + 1) % 3
-            self.line_vertices[line_idx * 2] = platform[i]
-            self.line_vertices[line_idx * 2 + 1] = platform[j]
-            self.line_colors[line_idx * 2] = plat_color
-            self.line_colors[line_idx * 2 + 1] = plat_color
-            line_idx += 1
+        self.line_vertices[line_idx * 2] = platform[0]
+        self.line_vertices[line_idx * 2 + 1] = platform[1]
+        self.line_colors[line_idx * 2] = plat_color
+        self.line_colors[line_idx * 2 + 1] = plat_color
+        line_idx += 1
+        self.line_vertices[line_idx * 2] = platform[1]
+        self.line_vertices[line_idx * 2 + 1] = platform[2]
+        self.line_colors[line_idx * 2] = plat_color
+        self.line_colors[line_idx * 2 + 1] = plat_color
+        line_idx += 1
+        self.line_vertices[line_idx * 2] = platform[2]
+        self.line_vertices[line_idx * 2 + 1] = platform[0]
+        self.line_colors[line_idx * 2] = plat_color
+        self.line_colors[line_idx * 2 + 1] = plat_color
+        line_idx += 1
 
         # ---- RGB axes at origin (20 units long) ----
         axis_len: ti.f32 = 20.0
@@ -268,7 +282,7 @@ class HexapodViewer:
         """Extract render data from a *HexapodState* and rebuild GPU geometry."""
         self.current_state = state
 
-        c: np.ndarray = state.carriage_world
+        c: np.ndarray = state.carriage_world if state.carriage_world is not None else np.zeros((3, 3))
         p: np.ndarray = state.vertices if state.vertices is not None else np.zeros((3, 3))
 
         # Base triangle at rail-end radius

@@ -60,7 +60,7 @@ def test_height_range(geometry: HexapodGeometry) -> None:
 
 def test_forward_kinematics(solver: HexapodSolver) -> None:
     """Forward solve at centred carriages yields a valid, low-error result."""
-    carriages = np.array([0.5, 0.5, 0.5])
+    carriages = np.array([50.0, 50.0, 50.0])
     output = solver.solve_from_carriages(carriages)
 
     assert output.result == SolveResult.SUCCESS
@@ -91,7 +91,7 @@ def test_inverse_kinematics(solver: HexapodSolver, geometry: HexapodGeometry) ->
 
 def test_roundtrip(solver: HexapodSolver) -> None:
     """Forward -> pose -> inverse -> compare carriages."""
-    original = np.array([0.4, 0.5, 0.6])
+    original = np.array([40.0, 50.0, 60.0])
     fwd = solver.solve_from_carriages(original)
     assert fwd.result == SolveResult.SUCCESS
 
